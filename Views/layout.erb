@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf8">
+	<title><%= @title + ' | Projects' %></title>
+	<link href="/bootstrap.css" rel="stylesheet">
+	<link href="/main.css" rel="stylesheet">
+</head>
+<body>
+	<div class="container">
+	<header>
+		<hgroup>
+			<h1><a href="/">Projects</a></h1>
+		</hgroup>
+	</header>
+	<div id="featured">
+		<p><a href="/agriculture">Agriculture</a>
+		<a href="/economic_development">Economic Development</a>
+		<a href="/education">Education</a>
+		<a href="/environment_naturalresources">Environment & Natural Resources</a>
+		<a href="/finance">Finance & Financial Reform</a>
+		<a href="/governance">Governance</a>
+		<a href="/health">Health</a>
+		<a href="/rural_development">Rural Development</a>
+		<a href="/social_development">Social Development</a>
+		<a href="/tourism">Tourism</a>
+		<a href="/other">Other</a></p>
+		<%= yield %>
+
+	</div>
+<!--	<footer>
+		<p>An app to enter project reports</p>
+	</footer> -->
+	</div>
+</body>
+</html>

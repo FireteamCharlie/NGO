@@ -1,0 +1,9 @@
+<% if @project %>  
+  <h1><%= @project.project_name %></h1>
+  <p><%= @project.organisation %></p>
+  <p><%= @project.sector %></p>
+  <p><%= @project.country %></p>
+  <p><%= @project.description %></p>
+<% else %>  
+  <p>Project not found.</p>  
+<% end %>

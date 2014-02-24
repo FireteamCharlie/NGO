@@ -1,0 +1,11 @@
+<% if @project %>
+	<p>Are you sure you want to delete the following project: <em><%= @project.project_name %> by <%= @project.organisation %></em>?</p>
+	<form action="/<%= @project.id %>" method="post">
+
+		<input type="hidden" name="_method" value="delete">
+		<input type="submit" value="Yes, Delete it!">
+		<a href="/<%= @project.id %>">Cancel</a>
+	</form>
+<% else %>
+	<p>Note not found.</p>
+<% end %>

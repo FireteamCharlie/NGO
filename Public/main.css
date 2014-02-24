@@ -1,0 +1,12 @@
+margin-top {
+  margin-top: 50px;
+}
+
+.project_panel {
+	border:1px solid;
+	border-radius: 5px;
+	border-color: #CEE3F6;
+	padding: 5px;
+	margin: 2px;
+	background-color: #FFFFFF;
+}

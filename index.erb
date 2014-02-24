@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf8">
+	<title><%= @title + ' | Projects' %></title>
+	<link href="/bootstrap.css" rel="stylesheet">
+	<link href="/main.css" rel="stylesheet">
+</head>
+<body>
+	<div class="container">
+	<header>
+		<hgroup>
+			<h1><a href="/">Projects</a></h1>
+		</hgroup>
+	</header>
+	<div id="featured">
+	<h1>Featured</h1>
+		<%= yield %>
+	</div>
+<!--	<footer>
+		<p>An app to enter project reports</p>
+	</footer> -->
+	</div>
+</body>
+</html>
