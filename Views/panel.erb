@@ -1,0 +1,19 @@
+
+<div class="row">
+	<div class="sectionheader"><%= header %> </div>
+</div>
+<div class="row">
+<% projects.each do |project| %> 
+  <div class="project_panel col-md-3">
+    <div class="project_header"><span><a href="/<%= project.id %>/display"><%= project.project_name %></a></span></div>
+  	  <div class="bold"><%= project.organisation %></div> 
+  	  <div class="bold"><%= project.sector %></div> 
+  	  <div class="bold"><%= project.country %></div> 
+  	  <p>$<%= project.funding_goal %></p>
+  	  <p><%= project.funding_date %></p>
+  	  <p><%= project.summary %></p>
+  	  <p><span><a href="/<%= project.id %>">[edit]</a></span></p>
+   </div>
+<% end %>
+
+</div>

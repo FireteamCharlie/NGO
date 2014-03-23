@@ -6,8 +6,8 @@ DataMapper::setup(:default, "sqlite3://#{Dir.pwd}/project.db")
 class Project
 	include DataMapper::Resource
 	property :id, Serial
-	property :organisation, Text
 	property :project_name, Text
+	property :organisation, Text
 	property :sector, Text
 	property :country, Text
 	property :rating, Text
@@ -20,15 +20,56 @@ class Project
 	property :updated_at, DateTime
 	property :status, Text
 end
+
+class Organisation
+	include DataMapper::Resource
+	property :id, Serial
+	property :name, Text
+	property :street_address, Text
+	property :state, Text
+	property :postal_code, Text
+	property :country, Text
+	property :contact_number, Text
+	property :description, Text
+	property :credit_check, Boolean, :default  => false
+	property :tax_deductability, Boolean, :default  => false
+	property :total_staff, Integer
+	property :total_countries, Integer
+	property :total_donations, Text
+end
 DataMapper.finalize.auto_upgrade!
 
+get '/about' do
+	@title = 'About'
+	erb :about
+end
+
+get '/admin' do
+	@title = 'Admin'
+	erb :admin
+end
+
+get '/all' do
+	@project = Project.all :order => :id.asc
+	@title = 'All Projects'
+	erb :home
+end
 
 get '/' do
-	@project = Project.all(:limit => 4,  :order => :id.desc)
+	projects = Project.all(:limit => 4,  :order => :id.desc)
 	@title = 'Home'
-	erb :home , :layout => :index
+	erb :index , :layout => :layout do
+          a = erb :panel, :locals => { :projects => Project.all(:limit => 4, :status =>'Featured',  :order => :id.asc), :header => 'Featured' }
+          b = erb :panel, :locals => { :projects => Project.all(:limit => 4, :status =>'Staff Pick', :order => :id.asc), :header => 'Staff Picks' }
+          a + b
+        end
 end 
 
+get '/organisation' do
+	@organisation = Organisation.all
+	@title = "All Organisations"
+	erb :organisations
+end
 
 post '/' do
 	r = Project.new
@@ -116,16 +157,43 @@ get '/other' do
 end
 
 
+
 get '/add' do
   @title = "Create project #{params[:id]}"  
   erb :add  
 end
+
+get '/organisation/add' do
+  @title = "Create organisation #{params[:id]}"  
+  erb :addOrg  
+end
+
+post '/organisation' do
+	o = Organisation.new
+	o.name = params[:name]
+    o.save
+	redirect '/organisation'
+end
+
+get '/organisation/:id' do  
+  @organisation = Organisation.get params[:id] 
+  @title = "Edit organisation #{params[:name]}"  
+  erb :displayOrg  
+end  
+
+get '/organisation/:id/edit' do  
+  @organisation = Organisation.get params[:id]  
+  @title = "Edit organisation #{params[:name]}"  
+  erb :editOrg  
+end  
 
 get '/:id' do  
   @project = Project.get params[:id]  
   @title = "Edit project #{params[:id]}"  
   erb :edit  
 end  
+
+
 
 def save s
   unless s.save
@@ -141,8 +209,8 @@ put '/:id' do
 	r.sector = params[:sector]
 	r.country = params[:country]
 	r.rating = params[:rating]
-	r.description = params[:description]
 	r.summary = params[:summary]
+	r.description = params[:description]
 	r.funding_goal = params[:funding_goal]
 	r.current_funding = params[:current_funding]
 	r.funding_date = params[:funding_date]
@@ -151,6 +219,8 @@ put '/:id' do
 	 save r
 	redirect '/'
 end
+
+
 
 get '/:id/delete' do
 	@project = Project.get params[:id]
@@ -164,8 +234,54 @@ delete '/:id' do
 	redirect '/'
 end
 
+get '/organisation/:id/delete' do
+	@organisation = Organisation.get params[:id]
+	@title = "Confirm deletion of organisation #{params[:id]}"
+	erb :deleteOrg
+end
+
+delete '/organisation/:id' do
+	o = Organisation.get params[:id]
+	o.destroy
+	redirect '/'
+end
+
 get '/:id/display' do
+	puts "Project Display"
 	@project = Project.get params[:id]
 	@title = "Project for #{params[:id]}"
 	erb :display
+end
+
+get '/organisation/:id/display' do
+	@organisation = Organisation.get params[:id]
+	@project = Project.all
+	@title = "Organisation for #{params[:id]}"
+	erb :displayOrg
+end
+
+get '/organisation/:id/edit' do
+	@organisation = Organisation.get params[:id]
+	@title = "Organisation for #{params[:id]}"
+	erb :editOrg
+end
+
+
+
+put '/organisation/:id' do
+	o = Organisation.get params[:id]
+	o.name = params[:name]
+	o.street_address = params[:street_address]
+	o.state = params[:state]
+	o.postal_code = params[:postal_code]
+	o.country = params[:country]
+	o.contact_number = params[:contact_number]
+	o.credit_check = params[:credit_check]
+	o.tax_deductability = params[:tax_deductability]
+	o.description = params[:description]
+	o.total_staff = params[:total_staff]
+	o.total_countries = params[:total_countries]
+	o.total_donations = params[:total_donations]
+    o.save
+	redirect '/organisation'
 end

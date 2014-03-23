@@ -1,0 +1,8 @@
+
+<% @organisation.each do |organisation| %> 
+  <div class="organisation_panel col-md-3">
+    <div class="organisation_header"><span><a href="/organisation/<%= organisation.id %>/display"><%= @organisation.name %></a></span></div>
+
+  	  <p><span><a href="/organisation/<%= organisation.id %>/edit">[edit]</a></span></p>
+   </div>
+<% end %>

@@ -1,6 +1,8 @@
-margin-top {
+.margin-top {
   margin-top: 50px;
 }
+
+
 
 .project_panel {
 	border:1px solid;
@@ -9,4 +11,54 @@ margin-top {
 	padding: 5px;
 	margin: 2px;
 	background-color: #FFFFFF;
+	color: #322B78;
+}
+
+.sectionheader {
+	font-size: 20pt;
+	color: #0B61A4;
+	margin-top: 10px;
+}
+
+.links {
+	text-align: center;
+}
+
+.project_display {
+	color: #322B78;
+}
+
+.project_title {
+	font-size: 26pt;
+	margin-bottom: 20px;
+}
+
+.project_overview {
+	font-size: 12pt;
+}
+
+.project_heading {
+	font-size: 14pt;
+}
+
+.organisation {
+	color: #322B78;
+}
+
+.organisation_name {
+	font-size: 26pt;
+}
+
+.organisation_summary {
+	margin-top: 20px;
+	font-size: 8pt;
+}
+
+.organisation_description {
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+
+.summary td{
+	padding-right: 50px;
 }

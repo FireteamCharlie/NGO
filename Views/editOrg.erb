@@ -1,0 +1,62 @@
+<% if @organisation %>  
+  <form action="/organisation/<%= @organisation.id %>" method="post" id="edit">  
+    <input type="hidden" name="_method" value="put">   
+  		<h1><%= @organisation.name %></h1>
+  		<table>
+  			<tr>
+  				<td>Organisation Name:</td>
+  				<td><input type="text" name="name" value="<%= @organisation.name %>" placeholder="Oganisation Name"></td>
+  			</tr>
+  			<tr>
+  				<td>Street Address:</td>
+  				<td><input type="text" name="street_address" value="<%= @organisation.street_address %>" placeholder="Street Address"></td>
+  			</tr>
+  			<tr>
+  				<td>State:</td>
+  				<td><input type="text" name="state" value="<%= @organisation.state %>" placeholder="State"></td>
+  			</tr>
+  			<tr>
+  				<td>Postal Code:</td>
+  				<td><input type="text" name="postal_code" value="<%= @organisation.postal_code %>" placeholder="Postal Code"></td>
+  			</tr>
+  			<tr>
+  				<td>Country:</td>
+  				<td><input type="text" name="country" value="<%= @organisation.country %>" placeholder="Country"></td>
+  			</tr>
+  			<tr>
+  				<td>Contact Number:</td>
+  				<td><input type="text" name="contact_number" value="<%= @organisation.contact_number %>" placeholder="Contact Number"></td>
+  			</tr>
+  			<tr>
+  				<td>Credit Check:</td>
+  				<td><input type="text" name="credit_check" value="<%= @organisation.credit_check %>" placeholder="Credit Check"></td>
+  			</tr>
+  			<tr>
+  				<td>Tax Deductability:</td>
+  				<td><input type="text" name="tax_deductability" value="<%= @organisation.tax_deductability %>"  placeholder="Tax Deductability"></td>
+  			</tr>
+        <tr>
+          <td>Description:</td>
+          <td><input type="text" name="description" value="<%= @organisation.description %>" placeholder="Description"></td>
+        </tr>
+        <tr>
+          <td>Total Staff:</td>
+          <td><input type="text" name="total_staff" value="<%= @organisation.total_staff %>" placeholder="Total Staff"></td>
+        </tr>
+        <tr>
+          <td>Total Countries:</td>
+          <td><input type="text" name="total_countries" value="<%= @organisation.total_countries %>" placeholder="Total Countries"></td>
+        </tr>
+        <tr>
+          <td>Total Donations:</td>
+          <td><input type="text" name="total_donations" value="<%= @organisation.total_donations %>" placeholder="Total Donations"></td>
+        </tr>
+  			<tr>
+  				<td><input type="submit"></td>
+  			</tr>
+  		</table>
+	</form>
+  <p><a href="/organisation/<%= @organisation.id %>/delete">Delete</a></p>  
+<% else %>  
+  <p>Organisation not found.</p>  
+<% end %>

@@ -27,16 +27,16 @@
   		<p>Country:</p>
 		<input type="text" name="country" value="<%= @project.country %>"><br>
 		<p>Project Summary:</p>
-		<textarea rows="4" cols="50" name="summary" value="<%= @project.summary %>"></textarea>
+		<textarea rows="4" cols="50" name="summary"><%= @project.summary %></textarea>
 		<p>Description:</p>
-		<textarea rows="4" cols="50" name="description" value="<%= @project.description %>"></textarea>
+		<textarea rows="4" cols="50" name="description"><%= @project.description %></textarea>
 		<input type="submit">
 		<h2>Financial Details</h2>
 		<p>Funding Goal:</p>
 		<input type="text" name="funding_goal" value="<%= @project.funding_goal %>"><br>
 		<p>Funding Date:</p>
 		<input type="text" name="funding_date" value="<%= @project.funding_date %>"><br>
-		<p>Sector:</p>
+		<p>Status:</p>
   		<select name="status">
   			<!-- Need a better way of showing the current selection -->
   			<option value="<%= @project.status %>"><%= @project.status %></option>

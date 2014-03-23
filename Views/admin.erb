@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf8">
-	<title><%= @title + ' | Projects' %></title>
+	<title><%= @title + ' | Administration' %></title>
 	<link href="/bootstrap.css" rel="stylesheet">
 	<link href="/main.css" rel="stylesheet">
 </head>
@@ -10,12 +10,18 @@
 	<div class="container">
 	<header>
 		<hgroup>
-			<h1><a href="/">Projects</a></h1>
+			<h1>Administration</h1>
 		</hgroup>
 	</header>
-	<div id="featured">
-	<h1>Featured</h1>
-		<%= yield %>
+	<div class="container">
+		<div>
+			<p>Add Project:
+			<a href="/add"><input type="submit" value="New Project"></a>
+			<br>
+			Add Organisation:
+			<a href="/organisation/add"><input type="submit" value="New Organisation"></a>
+			</p>
+		</div>
 	</div>
 <!--	<footer>
 		<p>An app to enter project reports</p>

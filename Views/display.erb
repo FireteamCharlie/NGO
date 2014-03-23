@@ -1,9 +1,49 @@
-<% if @project %>  
-  <h1><%= @project.project_name %></h1>
-  <p><%= @project.organisation %></p>
-  <p><%= @project.sector %></p>
-  <p><%= @project.country %></p>
-  <p><%= @project.description %></p>
+<% if @project %>
+	<div class="project_display">
+		<div class="row">
+			<div class="project_title col-md-8">
+				<%= @project.project_name %>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-8">
+				<div class="row">
+					<div class="project_panel">
+						<div class="project_overview">
+							<div class="project_heading">
+								Project Overview
+							</div>
+							<p>Organisation: <%= @project.organisation %></p>
+							<p>Sector: <%= @project.sector %> </p>
+							<p>Country: <%= @project.country %> </p>
+						</div>
+						<div class="project_description">
+							<%= @project.description %>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="project_heading project_panel">
+						Related Projects
+					</div>
+				</div>
+			</div>
+			
+			<div class="col-md-3 project_panel">
+				<div class="project_financials">
+					<div class="project_heading">
+						Project Financials
+					</div>
+					<div class="">
+						<p>Current Funding: <%= @project.current_funding %> </p>
+						<p>Funding Goal: <%= @project.funding_goal %> </p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>  
+
+  
 <% else %>  
   <p>Project not found.</p>  
 <% end %>
