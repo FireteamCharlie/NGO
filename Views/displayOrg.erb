@@ -35,20 +35,11 @@
 	  	</div>
 
 	  <p>Add Project:
-		<a href="/add"><input type="submit" value="New Project"></a>
+		<a href="/organisation/:organisation_id/add"><input type="submit" value="New Project"></a>
 	  </p>
 
-		<% @project.each do |project| %> 
-		  <div class="project_panel col-md-3">
-		    <%= @project.project_name %>
-		  	  <div class="bold"><%= @project.organisation %></div> 
-		  	  <div class="bold"><%= @project.sector %></div> 
-		  	  <div class="bold"><%= @project.country %></div> 
-		      <p>$<%= @project.funding_goal %></p>
-		      <p><%= @project.funding_date %></p>
-		  	  <p><span><a href="/<%= project.id %>">[edit]</a></span></p>
-		   </div>
-		<% end %>
+	
+
   </div>
 <% else %>  
   <p>Organisation not found.</p>  

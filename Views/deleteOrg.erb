@@ -1,10 +1,10 @@
 <% if @organisation %>
 	<p>Are you sure you want to delete the following organisation: <em><%= @organisation.name %></em>?</p>
-	<form action="/organisation/<%= @organisation.id %>" method="post">
+	<form action="/organisation/<%= @organisation.organisation_id %>" method="post">
 
 		<input type="hidden" name="_method" value="delete">
 		<input type="submit" value="Yes, Delete it!">
-		<a href="/<%= @organisation.id %>">Cancel</a>
+		<a href="/<%= @organisation.organisation_id %>">Cancel</a>
 	</form>
 <% else %>
 	<p>Organisation not found.</p>

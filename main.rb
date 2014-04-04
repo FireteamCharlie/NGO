@@ -5,9 +5,8 @@ require 'data_mapper'
 DataMapper::setup(:default, "sqlite3://#{Dir.pwd}/project.db")
 class Project
 	include DataMapper::Resource
-	property :id, Serial
+	property :project_id, Serial
 	property :project_name, Text
-	property :organisation, Text
 	property :sector, Text
 	property :country, Text
 	property :rating, Text
@@ -19,11 +18,12 @@ class Project
 	property :created_at, DateTime
 	property :updated_at, DateTime
 	property :status, Text
+	belongs_to :organisation
 end
 
 class Organisation
 	include DataMapper::Resource
-	property :id, Serial
+	property :organisation_id, Serial
 	property :name, Text
 	property :street_address, Text
 	property :state, Text
@@ -36,6 +36,7 @@ class Organisation
 	property :total_staff, Integer
 	property :total_countries, Integer
 	property :total_donations, Text
+	has n, :projects
 end
 DataMapper.finalize.auto_upgrade!
 
@@ -50,17 +51,17 @@ get '/admin' do
 end
 
 get '/all' do
-	@project = Project.all :order => :id.asc
+	@project = Project.all
 	@title = 'All Projects'
 	erb :home
 end
 
 get '/' do
-	projects = Project.all(:limit => 4,  :order => :id.desc)
+	projects = Project.all(:limit => 4,  :order => :project_id.desc)
 	@title = 'Home'
 	erb :index , :layout => :layout do
-          a = erb :panel, :locals => { :projects => Project.all(:limit => 4, :status =>'Featured',  :order => :id.asc), :header => 'Featured' }
-          b = erb :panel, :locals => { :projects => Project.all(:limit => 4, :status =>'Staff Pick', :order => :id.asc), :header => 'Staff Picks' }
+          a = erb :panel, :locals => { :projects => Project.all(:limit => 4, :status =>'Featured',  :order => :project_id.asc), :header => 'Featured' }
+          b = erb :panel, :locals => { :projects => Project.all(:limit => 4, :status =>'Staff Pick', :order => :project_id.asc), :header => 'Staff Picks' }
           a + b
         end
 end 
@@ -74,7 +75,7 @@ end
 post '/' do
 	r = Project.new
 	r.project_name = params[:project_name]
-	r.organisation = params[:organisation]
+	r.organisation = Organisation.get params[:organisation_id]
 	r.sector = params[:sector]
 	r.country = params[:country]
 	r.rating = params[:rating]
@@ -88,6 +89,8 @@ post '/' do
     r.save
 	redirect '/'
 end
+
+
 
 # Used to filter all project by sector
 get '/agriculture' do
@@ -159,12 +162,12 @@ end
 
 
 get '/add' do
-  @title = "Create project #{params[:id]}"  
+  @title = "Create project #{params[:project_id]}"  
   erb :add  
 end
 
 get '/organisation/add' do
-  @title = "Create organisation #{params[:id]}"  
+  @title = "Create organisation #{params[:organisation_id]}"  
   erb :addOrg  
 end
 
@@ -175,21 +178,48 @@ post '/organisation' do
 	redirect '/organisation'
 end
 
-get '/organisation/:id' do  
-  @organisation = Organisation.get params[:id] 
+get '/organisation/:organisation_id' do  
+  @organisation = Organisation.get params[:organisation_id] 
   @title = "Edit organisation #{params[:name]}"  
   erb :displayOrg  
 end  
 
-get '/organisation/:id/edit' do  
-  @organisation = Organisation.get params[:id]  
+
+
+get '/organisation/:organisation_id/add' do
+	@title = "Create a new project for #{params[:name]}"
+	@organisation = Organisation.get params[:organisation_id]
+	erb :newProject
+end
+
+post '/organisation/:organisation_id/add' do
+	r = Project.new
+	r.project_name = params[:project_name]
+	r.organisation = Organisation.get params[:organisation_id]
+	r.sector = params[:sector]
+	r.country = params[:country]
+	r.rating = params[:rating]
+	r.description = params[:description]
+	r.summary = params[:summary]
+	r.funding_goal = params[:funding_goal]
+	r.funding_date = params[:funding_date]
+	r.status = params[:status]
+	r.created_at = Time.now
+	r.updated_at = Time.now
+    r.save
+	redirect '/'
+end
+
+
+get '/organisation/:organisation_id/edit' do  
+  @organisation = Organisation.get params[:organisation_id]  
   @title = "Edit organisation #{params[:name]}"  
   erb :editOrg  
 end  
 
-get '/:id' do  
-  @project = Project.get params[:id]  
-  @title = "Edit project #{params[:id]}"  
+get '/:project_id' do  
+  @project = Project.get params[:project_id]  
+  @title = "Edit project #{params[:project_id]}"  
   erb :edit  
 end  
 
@@ -202,10 +232,9 @@ def save s
   end
 end
 
-put '/:id' do
-	r = Project.get params[:id]
+put '/:project_id' do
+	r = Project.get params[:project_id]
 	r.project_name = params[:project_name]
-	r.organisation = params[:organisation]
 	r.sector = params[:sector]
 	r.country = params[:country]
 	r.rating = params[:rating]
@@ -216,60 +245,59 @@ put '/:id' do
 	r.funding_date = params[:funding_date]
 	r.status = params[:status]
 	r.updated_at = Time.now
-	 save r
+	r.save
 	redirect '/'
 end
 
 
 
-get '/:id/delete' do
+get '/:project_id/delete' do
 	@project = Project.get params[:id]
 	@title = "Confirm deletion of project #{params[:id]}"
 	erb :delete
 end
 
-delete '/:id' do
+delete '/:project_id' do
 	n = Project.get params[:id]
 	n.destroy
 	redirect '/'
 end
 
-get '/organisation/:id/delete' do
-	@organisation = Organisation.get params[:id]
-	@title = "Confirm deletion of organisation #{params[:id]}"
+get '/organisation/:organisation_id/delete' do
+	@organisation = Organisation.get params[:organisation_id]
+	@title = "Confirm deletion of organisation #{params[:organisation_id]}"
 	erb :deleteOrg
 end
 
-delete '/organisation/:id' do
-	o = Organisation.get params[:id]
+delete '/organisation/:organisation_id' do
+	o = Organisation.get params[:organisation_id]
 	o.destroy
 	redirect '/'
 end
 
-get '/:id/display' do
-	puts "Project Display"
-	@project = Project.get params[:id]
-	@title = "Project for #{params[:id]}"
+get '/:project_id/display' do
+	@project = Project.get params[:project_id]
+	@title = "Project for #{params[:project_id]}"
 	erb :display
 end
 
-get '/organisation/:id/display' do
-	@organisation = Organisation.get params[:id]
+get '/organisation/:organisation_id/display' do
+	@organisation = Organisation.get params[:organisation_id]
 	@project = Project.all
-	@title = "Organisation for #{params[:id]}"
+	@title = "Organisation for #{params[:organisation_id]}"
 	erb :displayOrg
 end
 
-get '/organisation/:id/edit' do
-	@organisation = Organisation.get params[:id]
-	@title = "Organisation for #{params[:id]}"
+get '/organisation/:organisation_id/edit' do
+	@organisation = Organisation.get params[:organisation_id]
+	@title = "Organisation for #{params[:organisation_id]}"
 	erb :editOrg
 end
 
 
 
-put '/organisation/:id' do
-	o = Organisation.get params[:id]
+put '/organisation/:organisation_id' do
+	o = Organisation.get params[:organisation_id]
 	o.name = params[:name]
 	o.street_address = params[:street_address]
 	o.state = params[:state]
@@ -285,3 +313,5 @@ put '/organisation/:id' do
     o.save
 	redirect '/organisation'
 end
+
+

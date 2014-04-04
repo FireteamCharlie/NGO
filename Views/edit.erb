@@ -1,5 +1,5 @@
 <% if @project %>  
-  <form action="/<%= @project.id %>" method="post" id="edit">  
+  <form action="/<%= @project.project_id %>" method="post" id="edit">  
     <input type="hidden" name="_method" value="put">   
   		<h1><%= @project.project_name %></h1>
   		<!-- add params: values for the edited content -->
@@ -23,7 +23,6 @@
 			<option value="Other">Other</option>
 		</select>
   		<p>Organisation:</p>
-  		<input type="text" name="organisation" value="<%= @project.organisation %>"><br>
   		<p>Country:</p>
 		<input type="text" name="country" value="<%= @project.country %>"><br>
 		<p>Project Summary:</p>
@@ -45,7 +44,7 @@
 			<option value="Staff Pick">Staff Pick</option>
 		</select>
 	</form>
-  <p><a href="/<%= @project.id %>/delete">Delete</a></p>  
+  <p><a href="/<%= @project.project_id %>/delete">Delete</a></p>  
 <% else %>  
-  <p>Report not found.</p>  
+  <p>Project not found.</p>  
 <% end %>
