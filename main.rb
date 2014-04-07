@@ -40,6 +40,33 @@ class Organisation
 end
 DataMapper.finalize.auto_upgrade!
 
+get '/organisation/:organisation_id/projectAdd' do
+	@title = "New Project"
+	@organisation_id = params[:organisation_id]
+	erb :newProject
+end
+
+post '/organisation/:organisation_id/projectAdd' do
+  p params
+  puts request.body.read   
+  @org = Organisation.get(params[:organisation_id])
+  r = Project.new 
+  r.project_name = params[:project_name]
+  r.sector = params[:sector]
+  r.country = params[:country]
+  r.rating = params[:rating]
+  r.description = params[:description]
+  r.summary = params[:summary]
+  r.funding_goal = params[:funding_goal]
+  r.funding_date = params[:funding_date]
+  r.status = params[:status]
+  r.created_at = Time.now
+  r.updated_at = Time.now
+  r.organisation = @org
+  r.save
+  redirect '/'
+end
+
 get '/about' do
 	@title = 'About'
 	erb :about
@@ -75,7 +102,7 @@ end
 post '/' do
 	r = Project.new
 	r.project_name = params[:project_name]
-	r.organisation = Organisation.get params[:organisation_id]
+	#r.organisation = Organisation.get params[:organisation_id]
 	r.sector = params[:sector]
 	r.country = params[:country]
 	r.rating = params[:rating]
@@ -180,6 +207,7 @@ end
 
 get '/organisation/:organisation_id' do  
   @organisation = Organisation.get params[:organisation_id] 
+  @project = Project.all(:sector => 'Agriculture')
   @title = "Edit organisation #{params[:name]}"  
   erb :displayOrg  
 end  
@@ -188,6 +216,7 @@ end
 
 get '/organisation/:organisation_id/add' do
 	@title = "Create a new project for #{params[:name]}"
+	@organisation_id = params[:organisation_id]
 	@organisation = Organisation.get params[:organisation_id]
 	erb :newProject
 end
@@ -283,7 +312,7 @@ end
 
 get '/organisation/:organisation_id/display' do
 	@organisation = Organisation.get params[:organisation_id]
-	@project = Project.all
+	@project = Project.all(:organisation_organisation_id => params[:organisation_id])
 	@title = "Organisation for #{params[:organisation_id]}"
 	erb :displayOrg
 end
