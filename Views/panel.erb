@@ -5,13 +5,24 @@
 <div class="row">
 <% projects.each do |project| %> 
   <div class="project_panel col-md-3">
-    <div class="project_header"><span><a href="/<%= project.project_id %>/display"><%= project.project_name %></a></span></div>
+    <div class="project_image">
+      <img src="localhost:4567<%= project.image %>"  height="42" width="42"></p>
+    </div>
+    <div class="project_header"><b><span><a href="/project/<%= project.project_id %>/display"><%= project.project_name %></a></b></span></div>
+      <span><a href="/organisation/<%= project.organisation.organisation_id %>/display"><%= project.organisation.name %></a></span>
   	  <div class="bold"><%= project.sector %></div> 
   	  <div class="bold"><%= project.country %></div> 
   	  <p>$<%= project.funding_goal %></p>
   	  <p><%= project.funding_date %></p>
   	  <p><%= project.summary %></p>
-  	  <p><span><a href="/<%= project.project_id %>">[edit]</a></span></p>
+      <div class="progress">
+        <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="<%= project.current_funding %>" aria-valuemin="0" aria-valuemax="<%= project.funding_goal %>" style="width: <%= project.current_funding / project.funding_goal * 100 %>%">
+          <span class="sr-only"><%= project.current_funding / project.funding_goal * 100 %>% Complete (success)</span>
+        </div>
+      </div>
+      <div class="donateButton">
+        <a href="/project/<%= project.project_id %>/donate" type="button" class="btn btn-success">Donate</a>
+      </div>
    </div>
 <% end %>
 

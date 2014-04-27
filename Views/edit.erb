@@ -1,5 +1,5 @@
 <% if @project %>  
-  <form action="/<%= @project.project_id %>" method="post" id="edit">  
+  <form action="/project/<%= @project.project_id %>" method="post" id="edit">  
     <input type="hidden" name="_method" value="put">   
   		<h1><%= @project.project_name %></h1>
   		<!-- add params: values for the edited content -->
@@ -22,7 +22,6 @@
 			<option value="Tourism">Tourism</option>
 			<option value="Other">Other</option>
 		</select>
-  		<p>Organisation:</p>
   		<p>Country:</p>
 		<input type="text" name="country" value="<%= @project.country %>"><br>
 		<p>Project Summary:</p>
@@ -32,9 +31,12 @@
 		<input type="submit">
 		<h2>Financial Details</h2>
 		<p>Funding Goal:</p>
-		<input type="text" name="funding_goal" value="<%= @project.funding_goal %>"><br>
+		<input type="number" name="funding_goal" value="<%= @project.funding_goal %>"><br>
 		<p>Funding Date:</p>
 		<input type="text" name="funding_date" value="<%= @project.funding_date %>"><br>
+		<p>Current Funding:</p>
+		<input type="number" name="current_funding" value="<%= @project.current_funding %>"><br>
+
 		<p>Status:</p>
   		<select name="status">
   			<!-- Need a better way of showing the current selection -->
@@ -44,7 +46,7 @@
 			<option value="Staff Pick">Staff Pick</option>
 		</select>
 	</form>
-  <p><a href="/<%= @project.project_id %>/delete">Delete</a></p>  
+  <p><a href="/project/<%= @project.project_id %>/delete">Delete</a></p>  
 <% else %>  
   <p>Project not found.</p>  
 <% end %>

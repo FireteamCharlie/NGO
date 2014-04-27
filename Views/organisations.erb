@@ -1,7 +1,8 @@
-
+<a href="/organisation/add">New Organisation</a>
+<br>
 <% @organisation.each do |organisation| %> 
   <div class="organisation_panel col-md-3">
-    <div class="organisation_header"><span><a href="/organisation/<%= organisation.organisation_id %>/display"><%= @organisation.name %></a></span></div>
+    <div class="organisation_header"><span><a href="/organisation/<%= organisation.organisation_id %>/display"><%= organisation.name %></a></span></div>
 
   	  <p><span><a href="/organisation/<%= organisation.organisation_id %>/edit">[edit]</a></span></p>
    </div>

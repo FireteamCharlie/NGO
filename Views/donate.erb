@@ -1,0 +1,9 @@
+<section id="donation">
+  <form action="/project/<%= @project.project_id %>/donate" method="post">
+    <p>Donor:</p>
+    <input type="text" name="donor"><br>
+    <p>amount:</p>
+    <input type="text" name="amount"><br>
+    <input type="submit" value="Make Donation!">
+  </form>
+</section>

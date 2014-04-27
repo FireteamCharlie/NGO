@@ -1,8 +1,20 @@
 require 'rubygems'
 require 'sinatra'
 require 'data_mapper'
+require 'bcrypt'
+require 'carrierwave'
+require 'carrierwave/datamapper'
+
+class MyUploader < CarrierWave::Uploader::Base    #via a Carrierwave tutorial
+  storage :file
+end
+
 
 DataMapper::setup(:default, "sqlite3://#{Dir.pwd}/project.db")
+
+#DataMapper.setup(:default, 'postgres://localhost/project')
+
+
 class Project
 	include DataMapper::Resource
 	property :project_id, Serial
@@ -12,13 +24,15 @@ class Project
 	property :rating, Text
 	property :description, Text
 	property :summary, Text
-	property :funding_goal, Text
-	property :current_funding, Text
+	property :funding_goal, Float
+	property :current_funding, Float, :default  => 0
 	property :funding_date, Text
 	property :created_at, DateTime
 	property :updated_at, DateTime
 	property :status, Text
+	mount_uploader :image, MyUploader    
 	belongs_to :organisation
+	has n, :donations
 end
 
 class Organisation
@@ -35,10 +49,31 @@ class Organisation
 	property :tax_deductability, Boolean, :default  => false
 	property :total_staff, Integer
 	property :total_countries, Integer
-	property :total_donations, Text
+	property :total_donations, Float
 	has n, :projects
 end
+
+class Donation
+	include DataMapper::Resource
+	property :donation_id, Serial
+	property :donor, Text
+	property :amount, Float
+	property :time, Time
+	belongs_to :project
+end
+
+class User
+  include DataMapper::Resource
+  include BCrypt
+
+  property :id, Serial, :key => true
+  property :username, String, :length => 3..50
+  property :password, BCryptHash
+end
+
 DataMapper.finalize.auto_upgrade!
+
+
 
 get '/organisation/:organisation_id/projectAdd' do
 	@title = "New Project"
@@ -60,11 +95,12 @@ post '/organisation/:organisation_id/projectAdd' do
   r.funding_goal = params[:funding_goal]
   r.funding_date = params[:funding_date]
   r.status = params[:status]
+  r.image = params[:image]
   r.created_at = Time.now
   r.updated_at = Time.now
   r.organisation = @org
   r.save
-  redirect '/'
+  redirect "/organisation/#{params[:organisation_id]}/display"
 end
 
 get '/about' do
@@ -99,10 +135,9 @@ get '/organisation' do
 	erb :organisations
 end
 
-post '/' do
+post '/project/' do
 	r = Project.new
 	r.project_name = params[:project_name]
-	#r.organisation = Organisation.get params[:organisation_id]
 	r.sector = params[:sector]
 	r.country = params[:country]
 	r.rating = params[:rating]
@@ -188,7 +223,7 @@ end
 
 
 
-get '/add' do
+get '/project/add' do
   @title = "Create project #{params[:project_id]}"  
   erb :add  
 end
@@ -246,7 +281,7 @@ get '/organisation/:organisation_id/edit' do
   erb :editOrg  
 end  
 
-get '/:project_id' do  
+get '/project/:project_id/edit' do  
   @project = Project.get params[:project_id]  
   @title = "Edit project #{params[:project_id]}"  
   erb :edit  
@@ -261,7 +296,7 @@ def save s
   end
 end
 
-put '/:project_id' do
+put '/project/:project_id' do
 	r = Project.get params[:project_id]
 	r.project_name = params[:project_name]
 	r.sector = params[:sector]
@@ -272,6 +307,7 @@ put '/:project_id' do
 	r.funding_goal = params[:funding_goal]
 	r.current_funding = params[:current_funding]
 	r.funding_date = params[:funding_date]
+	r.current_funding = params[:current_funding]
 	r.status = params[:status]
 	r.updated_at = Time.now
 	r.save
@@ -280,16 +316,16 @@ end
 
 
 
-get '/:project_id/delete' do
-	@project = Project.get params[:id]
-	@title = "Confirm deletion of project #{params[:id]}"
+get '/project/:project_id/delete' do
+	@project = Project.get params[:project_id]
+	@title = "Confirm deletion of project #{params[:project_id]}"
 	erb :delete
 end
 
-delete '/:project_id' do
-	n = Project.get params[:id]
+delete '/project/:project_id' do
+	n = Project.get params[:project_id]
 	n.destroy
-	redirect '/'
+	redirect '/organisation/#{params[:organisation_id]}'
 end
 
 get '/organisation/:organisation_id/delete' do
@@ -304,15 +340,20 @@ delete '/organisation/:organisation_id' do
 	redirect '/'
 end
 
-get '/:project_id/display' do
+get '/project/:project_id/display' do
 	@project = Project.get params[:project_id]
+	@relatedproject = Project.all(:limit => 4)
 	@title = "Project for #{params[:project_id]}"
 	erb :display
 end
 
 get '/organisation/:organisation_id/display' do
 	@organisation = Organisation.get params[:organisation_id]
-	@project = Project.all(:organisation_organisation_id => params[:organisation_id])
+	@org = Organisation.first(:organisation_id => params[:organisation_id])
+    @project = Project.all(:organisation => @org)
+    #@donation_count = @project.current_funding
+    @project_count = @project.count
+    puts @project_count
 	@title = "Organisation for #{params[:organisation_id]}"
 	erb :displayOrg
 end
@@ -343,4 +384,35 @@ put '/organisation/:organisation_id' do
 	redirect '/organisation'
 end
 
+get '/project/:project_id/donate' do
+	@title = "Make a donation to #{params[:project_name]}"
+	@project = Project.get params[:project_id]
+	erb :donate
+end
 
+get '/project/:project_id/:donation_id' do
+	@project = Project.get params[:project_id]
+	@title = "Donations"
+	@donation = Donation.get params[:donation_id]
+	erb :donation
+end
+
+post '/project/:project_id/donate' do  
+  @proj = Project.get params[:project_id]
+  p @proj
+  d = Donation.new 
+  d.donor = params[:donor]
+  d.amount = params[:amount]
+  d.time = Time.now
+  d.project = @proj
+  d.project.current_funding = d.project.current_funding + d.amount
+  d.save
+  p params
+  puts request.body.read 
+  #Change this to a thank you page at some stage
+  redirect "/project/#{params[:project_id]}/display"
+end
+
+get '/admin' do
+	erb :admin
+end

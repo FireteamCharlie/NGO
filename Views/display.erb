@@ -1,8 +1,11 @@
 <% if @project %>
 	<div class="project_display">
 		<div class="row">
-			<div class="project_title col-md-8">
-				<%= @project.project_name %>
+			<div class="project_title">
+				<p><%= @project.project_name %></p>	
+				<div class="organisationlink">
+					<span><a href="/organisation/<%= @project.organisation.organisation_id %>/display"><%= @project.organisation.name %></a></span>
+				</div>
 			</div>
 		</div>
 		<div class="row">
@@ -21,9 +24,27 @@
 						</div>
 					</div>
 				</div>
-				<div class="row">
-					<div class="project_heading project_panel">
-						Related Projects
+				
+			<div class="row">
+					<div class="project_heading related_project_panel">
+						<div class="">
+							Related Projects
+						</div>
+						<div class="">
+							<% @relatedproject.each do |project| %> 
+						  		<div class="project_panel col-md-3">
+						    	<div class="project_header"><span><a href="/project/<%= project.project_id %>/display"><%= project.project_name %></a></span></div>
+						  	  	  <div class="bold">Organisation: <%= project.organisation.name %></div> 
+							  	  <div class="bold">Country: <%= project.country %></div> 
+							      <div class="bold">Goal: $<%= project.funding_goal %></div>
+							      <div class="bold">End Date: <%= project.funding_date %></div>
+							      <div class="bold"><%= project.summary %></div>
+							      <div class="donateButton">
+								        <a href="/project/<%= project.project_id %>/display" type="button" class="btn btn-success">Donate</a>
+								    </div>
+							   </div>
+							<% end %>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -34,12 +55,22 @@
 						Project Financials
 					</div>
 					<div class="">
-						<p>Current Funding: <%= @project.current_funding %> </p>
-						<p>Funding Goal: <%= @project.funding_goal %> </p>
+						<p>Current Funding: $<%= @project.current_funding.round(2) %> </p>
+						<p>Funding Goal: $<%= @project.funding_goal.round(2) %> </p>
+						<div class="progress">
+					        <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="<%= @project.current_funding %>" aria-valuemin="0" aria-valuemax="<%= @project.funding_goal %>" style="width: <%= @project.current_funding / @project.funding_goal * 100 %>%">
+					          <span class="sr-only"><%= @project.current_funding / @project.funding_goal * 100 %>% Complete (success)</span>
+					        </div>
+					    </div>
+					    <div class="donateButton">
+					        <a href="/project/<%= @project.project_id %>/donate" type="button" class="btn btn-success">Donate</a>
+					    </div>
 					</div>
 				</div>
 			</div>
 		</div>
+
+
 	</div>  
 
   

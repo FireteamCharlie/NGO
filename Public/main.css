@@ -2,7 +2,13 @@
   margin-top: 50px;
 }
 
+.organisationlink {
+  font-size: 18pt;
+}
 
+.donateButton {
+	margin-left: 35%;
+}
 
 .project_panel {
 	border:1px solid;
@@ -12,6 +18,10 @@
 	margin: 2px;
 	background-color: #FFFFFF;
 	color: #322B78;
+}
+
+.project_panel {
+	font-size: 10pt;
 }
 
 .sectionheader {

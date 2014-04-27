@@ -1,5 +1,5 @@
 <% if @organisation %>  
-  <form action="/organisation/<%= @organisation.id %>" method="post" id="edit">  
+  <form action="/organisation/<%= @organisation.organisation_id %>" method="post" id="edit">  
     <input type="hidden" name="_method" value="put">   
   		<h1><%= @organisation.name %></h1>
   		<table>
@@ -56,7 +56,7 @@
   			</tr>
   		</table>
 	</form>
-  <p><a href="/organisation/<%= @organisation.id %>/delete">Delete</a></p>  
+  <p><a href="/organisation/<%= @organisation.organisation_id %>/delete">Delete</a></p>  
 <% else %>  
   <p>Organisation not found.</p>  
 <% end %>
