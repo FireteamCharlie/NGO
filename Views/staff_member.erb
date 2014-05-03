@@ -1,0 +1,14 @@
+<% if @staff %>
+	<div class="project_display">
+		<div class="row">
+			<div class="project_title">
+				<p><%= @staff.staff_name %></p>	
+			</div>
+		</div>
+
+	</div>  
+
+  
+<% else %>  
+  <p>Staff not found.</p>  
+<% end %>

@@ -7,12 +7,35 @@ require 'carrierwave/datamapper'
 
 class MyUploader < CarrierWave::Uploader::Base    #via a Carrierwave tutorial
   storage :file
+  def store_dir
+    'Public/Images/'
+  end
+end
+
+enable :sessions
+
+userTable = {}
+
+helpers do
+  
+  def login?
+    if session[:username].nil?
+      return false
+    else
+      return true
+    end
+  end
+  
+  def username
+    return session[:username]
+  end
+  
 end
 
 
-DataMapper::setup(:default, "sqlite3://#{Dir.pwd}/project.db")
+#DataMapper::setup(:default, "sqlite3://#{Dir.pwd}/project.db")
 
-#DataMapper.setup(:default, 'postgres://localhost/project')
+DataMapper.setup(:default, 'postgres://localhost/project')
 
 
 class Project
@@ -73,7 +96,49 @@ end
 
 DataMapper.finalize.auto_upgrade!
 
+get "/signup" do
+	@title = "Sign Up"	
+  erb :signup
+end
+ 
+post "/signup" do
+  password_salt = BCrypt::Engine.generate_salt
+  password_hash = BCrypt::Engine.hash_secret(params[:password], password_salt)
+  
+  #change this method to database driven
+  userTable[params[:username]] = {
+    :salt => password_salt,
+    :passwordhash => password_hash 
+  }
+  
+  session[:username] = params[:username]
+  redirect "/"
+end
+ 
+post "/login" do
+  if userTable.has_key?(params[:username])
+    user = userTable[params[:username]]
+    if user[:passwordhash] == BCrypt::Engine.hash_secret(params[:password], user[:salt])
+      session[:username] = params[:username]
+      redirect "/"
+    end
+  end
+  @title = "Unauthorised User"
+  erb :error
+end
+ 
+get "/logout" do
+  session[:username] = nil
+  redirect "/"
+end
 
+get "/auth" do
+	@title = "Login"
+	erb :auth
+end
+
+get '/uploads/:image' do
+end
 
 get '/organisation/:organisation_id/projectAdd' do
 	@title = "New Project"
@@ -99,6 +164,7 @@ post '/organisation/:organisation_id/projectAdd' do
   r.created_at = Time.now
   r.updated_at = Time.now
   r.organisation = @org
+  puts r
   r.save
   redirect "/organisation/#{params[:organisation_id]}/display"
 end
@@ -109,6 +175,7 @@ get '/about' do
 end
 
 get '/admin' do
+	protected!
 	@title = 'Admin'
 	erb :admin
 end

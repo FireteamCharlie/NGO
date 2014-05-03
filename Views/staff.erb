@@ -1,0 +1,9 @@
+
+<% @staff.each do |staff| %> 
+  <div class="project_panel col-md-3">
+    <div class="project_header"><span><a href="/"><%= staff.staff_name %></a></span></div>
+  	  <div class="bold"><%= staff.organisation.name %></div> 
+  	  <div class="bold"><%= staff.specialty %></div> 
+  	  <!--<p><span><a href="/<%= staff.staff_id %>">[edit]</a></span></p>-->
+   </div>
+<% end %>
