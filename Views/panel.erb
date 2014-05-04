@@ -13,7 +13,7 @@
   	  <div class="bold"><%= project.sector %></div> 
   	  <div class="bold"><%= project.country %></div> 
   	  <p>$<%= project.funding_goal %></p>
-  	  <p><%= project.funding_date %></p>
+  	  <p><%= project.funding_date.strftime("%d/%m/%Y") %></p>
   	  <p><%= project.summary %></p>
       <div class="progress">
         <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="<%= project.current_funding %>" aria-valuemin="0" aria-valuemax="<%= project.funding_goal %>" style="width: <%= project.current_funding / project.funding_goal * 100 %>%">

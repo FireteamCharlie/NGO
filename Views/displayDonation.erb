@@ -1,0 +1,7 @@
+<div class="">
+	<h1>Donation: <%= @donation.donation_id %></h1>
+	<p>Project: <%= @donation.project.project_name %></p>
+	<p>Date: <%= @donation.time.strftime("%d/%m/%Y") %></p>
+	<p>Amount:$<%= @donation.amount %></p>
+	<button type="button" class="btn btn-primary">Email Receipt</button>
+</div>

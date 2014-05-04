@@ -15,10 +15,11 @@
 	border-radius: 5px;
 	border-color: #CEE3F6;
 	padding: 5px;
-	margin: 2px;
 	background-color: #FFFFFF;
 	color: #322B78;
 }
+
+
 
 .project_panel {
 	font-size: 10pt;
@@ -71,4 +72,14 @@
 
 .summary td{
 	padding-right: 50px;
+}
+
+.display_panel {
+	border:1px solid;
+	border-radius: 5px;
+	border-color: #CEE3F6;
+	padding: 5px;
+	margin: 2px;
+	background-color: #FFFFFF;
+	color: #322B78;
 }

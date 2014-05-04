@@ -12,11 +12,19 @@ class MyUploader < CarrierWave::Uploader::Base    #via a Carrierwave tutorial
   end
 end
 
+#use Rack::Session::EncryptedCookie, :secret => "\xF7\xAF\x18\xAA\xFFK\x94E\xF0\x82^\x11\x1A?}\x9C"
 enable :sessions
+use Rack::Session::Cookie, :secret => "\xF7\xAF\x18\xAA\xFFK\x94E\xF0\x82^\x11\x1A?}\x9C"
+
 
 userTable = {}
 
 helpers do
+
+  def admin?
+  	if session[:username] == 'Luke'
+  	end
+  end
   
   def login?
     if session[:username].nil?
@@ -29,6 +37,15 @@ helpers do
   def username
     return session[:username]
   end
+
+  def firstname
+  	return session[:firstname]
+  end
+
+  def lastname
+  	return session[:lastname]
+  end
+
   
 end
 
@@ -49,7 +66,7 @@ class Project
 	property :summary, Text
 	property :funding_goal, Float
 	property :current_funding, Float, :default  => 0
-	property :funding_date, Text
+	property :funding_date, DateTime
 	property :created_at, DateTime
 	property :updated_at, DateTime
 	property :status, Text
@@ -82,6 +99,9 @@ class Donation
 	property :donor, Text
 	property :amount, Float
 	property :time, Time
+	property :cardnumber, Text
+	property :expiry, Text
+	property :ccv, Text
 	belongs_to :project
 end
 
@@ -90,11 +110,23 @@ class User
   include BCrypt
 
   property :id, Serial, :key => true
+  property :firstname, Text
+  property :lastname, Text
   property :username, String, :length => 3..50
   property :password, BCryptHash
+  property :emailaddress, Text
 end
 
 DataMapper.finalize.auto_upgrade!
+
+
+get "/authtest" do
+	puts login?
+	puts username
+	puts session
+	require 'pry'
+	binding.pry
+end
 
 get "/signup" do
 	@title = "Sign Up"	
@@ -105,23 +137,33 @@ post "/signup" do
   password_salt = BCrypt::Engine.generate_salt
   password_hash = BCrypt::Engine.hash_secret(params[:password], password_salt)
   
-  #change this method to database driven
-  userTable[params[:username]] = {
-    :salt => password_salt,
-    :passwordhash => password_hash 
-  }
+  
+  user = User.new
+  user.firstname = params[:firstname]
+  user.lastname = params[:lastname]
+  user.username = params[:username]
+  user.password = params[:password]
+  user.save
   
   session[:username] = params[:username]
   redirect "/"
 end
  
 post "/login" do
-  if userTable.has_key?(params[:username])
-    user = userTable[params[:username]]
-    if user[:passwordhash] == BCrypt::Engine.hash_secret(params[:password], user[:salt])
+  puts params[:username]
+  user = User.first(:username => params[:username])
+  if not user.nil?
+  	puts user
+    if user.password == params[:password]
+      puts 'valid password!!'
+      # Need to find out how I can output values from the session into Terminal
       session[:username] = params[:username]
+      session[:firstname] = params[:firstname]
+      session[:lastname] = params[:lastname]
       redirect "/"
     end
+  else 
+  	redirect "/error"
   end
   @title = "Unauthorised User"
   erb :error
@@ -135,6 +177,17 @@ end
 get "/auth" do
 	@title = "Login"
 	erb :auth
+end
+
+
+get "/user/:username" do
+	@title = "User Profile"
+	@user = User.first(:username => params[:username])
+	@donations = Donation.all(:donor => params[:username])
+	puts @donations
+	puts @user.firstname
+	puts @user.lastname
+	erb :user
 end
 
 get '/uploads/:image' do
@@ -175,7 +228,6 @@ get '/about' do
 end
 
 get '/admin' do
-	protected!
 	@title = 'Admin'
 	erb :admin
 end
@@ -464,16 +516,25 @@ get '/project/:project_id/:donation_id' do
 	erb :donation
 end
 
+get '/donation/:donation_id/display' do
+	@donation = Donation.get params[:donation_id]
+	@title = "Donation details for #{params[:donation_id]}"
+	erb :displayDonation
+end
+
 post '/project/:project_id/donate' do  
   @proj = Project.get params[:project_id]
   p @proj
   d = Donation.new 
-  d.donor = params[:donor]
+  d.donor = username
   d.amount = params[:amount]
   d.time = Time.now
   d.project = @proj
   d.project.current_funding = d.project.current_funding + d.amount
+  puts d.amount
+  puts "About to save"
   d.save
+  puts "Saved"
   p params
   puts request.body.read 
   #Change this to a thank you page at some stage

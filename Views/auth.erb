@@ -1,5 +1,5 @@
  <% if login? %>
-  <h1> Welcome #{username}!" </h1>
+  <h1> Welcome <%= username %>! </h1>
   <a href="/logout"}>Logout</a>
  <% else %>
   <form action="/login" method="post">
@@ -16,7 +16,7 @@
       <input type="reset" value="Clear">
     </div>  
   </form>
-
   <p>
     <a href="/signup"> Signup</a>
   </p>
+<% end %>

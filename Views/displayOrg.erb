@@ -47,7 +47,7 @@
 	  	  <div class="bold"><%= project.sector %></div> 
 	  	  <div class="bold"><%= project.country %></div> 
 	      <p>$<%= project.funding_goal %></p>
-	      <p><%= project.funding_date %></p>
+	      <p><%= project.funding_date.strftime("%d/%m/%Y") %></p>
 	      <p><%= project.summary %></p>
 	  	  <p><span><a href="/project/<%= project.project_id %>/edit">[edit]</a></span></p>
 	  	  <div class="progress">

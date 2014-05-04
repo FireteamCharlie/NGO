@@ -11,15 +11,14 @@
 		<div class="row">
 			<div class="col-md-8">
 				<div class="row">
-					<div class="project_panel">
+					<div class="display_panel">
 						<div class="project_overview">
-							<div class="project_heading">
-								Project Overview
-							</div>
+							<h3>Project Overview</h3>
 							<p>Sector: <%= @project.sector %> </p>
 							<p>Country: <%= @project.country %> </p>
 						</div>
 						<div class="project_description">
+							<h3>Description</h3>
 							<%= @project.description %>
 						</div>
 					</div>
@@ -37,7 +36,7 @@
 						  	  	  <div class="bold">Organisation: <%= project.organisation.name %></div> 
 							  	  <div class="bold">Country: <%= project.country %></div> 
 							      <div class="bold">Goal: $<%= project.funding_goal %></div>
-							      <div class="bold">End Date: <%= project.funding_date %></div>
+							      <div class="bold">End Date: <%= project.funding_date.strftime("%d/%m/%Y") %></div>
 							      <div class="bold"><%= project.summary %></div>
 							      <div class="donateButton">
 								        <a href="/project/<%= project.project_id %>/display" type="button" class="btn btn-success">Donate</a>
@@ -49,7 +48,7 @@
 				</div>
 			</div>
 			
-			<div class="col-md-3 project_panel">
+			<div class="col-md-3 display_panel">
 				<div class="project_financials">
 					<div class="project_heading">
 						Project Financials

@@ -1,0 +1,63 @@
+class Staff
+	include DataMapper::Resource
+	property :staff_id, Serial
+	property :staff_name, Text
+	property :specialty, Text
+	belongs_to :project
+	belongs_to :organisation
+end
+
+get '/staff' do
+	@staff = Staff.all
+	@title = "Staff"
+	erb :staff
+end
+
+get '/staff/:staff_id' do
+	@staff = Staff.get params[:staff_id]
+	@title = "#{params[:staff_name]}"
+	@project = Staff.project
+	erb :staff_member
+end
+
+get '/project/:project_id/staff/add' do
+	@title = "Create a new staff member for #{params[:name]}"
+	@project_id= params[:project_id]
+	@project = Project.get params[:project_id]
+	erb :newStaff
+end
+
+post '/project/:project_id/staff/add' do  
+  @proj = Project.get params[:project_id]
+  p @proj
+  s = Staff.new
+  s.staff_name = params[:staff_name]
+  s.specialty = params[:specialty]
+  s.project = @proj
+  s.save
+  p params
+  puts request.body.read 
+  redirect "/"
+end
+
+helpers do
+  def protected!
+    return if authorized?
+    headers['WWW-Authenticate'] = 'Basic realm="Restricted Area"'
+    halt 401, "Not authorized\n"
+  end
+
+  def authorized?
+    @auth ||=  Rack::Auth::Basic::Request.new(request.env)
+    @auth.provided? and @auth.basic? and @auth.credentials and @auth.credentials == ['admin', 'admin']
+  end
+end
+
+get '/test' do
+  "Everybody can see this page"
+end
+
+get '/protected' do
+  protected!
+  "Welcome, authenticated client"
+end
