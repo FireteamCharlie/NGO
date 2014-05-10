@@ -73,6 +73,7 @@ class Project
 	mount_uploader :image, MyUploader    
 	belongs_to :organisation
 	has n, :donations
+	has n, :updates
 end
 
 class Organisation
@@ -115,6 +116,16 @@ class User
   property :username, String, :length => 3..50
   property :password, BCryptHash
   property :emailaddress, Text
+end
+
+class Update
+  include DataMapper::Resource
+
+  property :update_id, Serial
+  property :postname, Text
+  property :postcontent, Text
+  property :posttime, Time
+  belongs_to :project
 end
 
 DataMapper.finalize.auto_upgrade!
@@ -270,6 +281,39 @@ post '/project/' do
     r.save
 	redirect '/'
 end
+
+get '/project/:project_id/updates' do
+	@title = "Project Updates"
+	@updates = Update.all
+	puts @updates.postname
+	puts "This worked"
+	erb :updates
+end
+
+get '/project/:project_id/updates/add' do
+	@title = "Create update #{params[:update_id]}"  
+	@project = Project.get params[:project_id]
+  	erb :addUpdate 
+end
+
+post '/project/:project_id/updates/add' do 
+  @proj = Project.get params[:project_id]
+  puts @proj
+  u = Update.new 
+  u.postname = params[:postname]
+  u.postcontent = params[:postcontent]
+  u.posttime = Time.now
+  u.project = @proj
+  puts u
+  puts "About to save"
+  p params
+  puts request.body.read 
+  #Change this to a thank you page at some stage
+  u.save
+  puts "Saved"
+  redirect "/project/#{params[:project_id]}/display"
+end
+
 
 
 
@@ -544,3 +588,7 @@ end
 get '/admin' do
 	erb :admin
 end
+
+
+
+

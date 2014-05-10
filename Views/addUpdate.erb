@@ -1,0 +1,13 @@
+<form action="/project/<%= @project.project_id %>/updates/add" method="post">
+  <div>
+    <label for="postname">Post Name:</label>
+    <input type="text" name="postname">
+  </div>
+  <div>
+    <label for="postcontext">Post Content:</label>
+    <input type="text" name="postcontent">
+  </div>
+  <div>
+    <input type="submit" value="Post">
+    <input type="reset" value="Clear">
+  </div>
