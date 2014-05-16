@@ -2,15 +2,15 @@ require 'rubygems'
 require 'sinatra'
 require 'data_mapper'
 require 'bcrypt'
-require 'carrierwave'
-require 'carrierwave/datamapper'
+#require 'carrierwave'
+#require 'carrierwave/datamapper'
 
-class MyUploader < CarrierWave::Uploader::Base    #via a Carrierwave tutorial
-  storage :file
-  def store_dir
-    'Public/Images/'
-  end
-end
+#class MyUploader < CarrierWave::Uploader::Base    #via a Carrierwave tutorial
+#  storage :file
+#  def store_dir
+#    'Public/Images/'
+#  end
+#end
 
 #use Rack::Session::EncryptedCookie, :secret => "\xF7\xAF\x18\xAA\xFFK\x94E\xF0\x82^\x11\x1A?}\x9C"
 enable :sessions
@@ -70,7 +70,7 @@ class Project
 	property :created_at, DateTime
 	property :updated_at, DateTime
 	property :status, Text
-	mount_uploader :image, MyUploader    
+	#mount_uploader :image, MyUploader    
 	belongs_to :organisation
 	has n, :donations
 	has n, :updates
